@@ -1,5 +1,5 @@
 import { syncData } from './sync';
-import config from './config.json';
+import config from './config';
 import { updateGlobalLinks } from './globalLinks';
 
 async function main_loop() {
@@ -9,7 +9,7 @@ async function main_loop() {
     await syncData();
 
     // Then sleep for 10s
-    await new Promise((resolve) => setTimeout(resolve, config.poll_interval * 1000));
+    await new Promise((resolve) => setTimeout(resolve, (Number(config?.poll_interval) || 5) * 1000));
   }
 }
 

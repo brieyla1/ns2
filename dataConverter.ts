@@ -1,6 +1,7 @@
 import { Issue } from '@linear/sdk';
 import { Priority } from './linearAPI';
-const config = require('./config.json');
+// const config = require('./config.json');
+import config from './config';
 import { NotionObject, notion } from './notionAPI';
 import { UserType, users } from './globalLinks';
 

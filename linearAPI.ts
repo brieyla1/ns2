@@ -1,9 +1,10 @@
 import axios from 'axios';
-import config from './config.json';
+import config from './config';
 
 import { Issue, LinearClient } from '@linear/sdk';
 import { MiddlePropertiesType, convertLinearToMiddleman } from './dataConverter';
 import { labels, statuses } from './globalLinks';
+
 export const linear = new LinearClient({ apiKey: config.linear.api_key });
 
 const cache: { [id: string]: MiddlePropertiesType } = {};

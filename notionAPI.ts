@@ -1,4 +1,4 @@
-import config from './config.json';
+import config from './config';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
 import { markdownToBlocks } from '@tryfabric/martian';
