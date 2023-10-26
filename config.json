@@ -1,0 +1,11 @@
+{
+    "notion": {
+        "api_key": "secret_liD6ku5fFIZeXeVAXHvLjzvQQEZj6SfektWp7MvVAkZ",
+        "database_id": "ea97ede34b4d44e28735a06a0038e55b"
+    },
+    "linear": {
+        "api_key": "lin_api_hAHOyDYvkqmkm3DK4puSKsukIrCgkdCbDAP67jvM",
+        "project_id": "51392bf2-c5a4-4f03-9500-0c941703b61c"
+    },
+    "poll_interval": 5
+}
