@@ -41,8 +41,6 @@ async function getDatabaseItems({ refetchAll }: { refetchAll?: boolean }) {
       cache[el.id] = convertNotionToMiddleman([el])[0];
     });
 
-    console.log('Grabbed latest notion items, total: ', Object.keys(cache).length);
-
     return cache;
   } catch (error) {
     console.error('Error fetching Notion database items:', error);

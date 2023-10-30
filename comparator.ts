@@ -14,7 +14,7 @@ type CompareResultType = {
   deleted?: boolean; // Item deleted in either Linear or Notion
 };
 
-const prepareStringForCompare = (str: string, type: 'linear' | 'notion') =>
+export const prepareStringForCompare = (str: string, type: 'linear' | 'notion') =>
   str
     .replace(/!\[.*?\]\(.*?\)/g, '![](link)')
     .replace(/[\s#]/g, '')
@@ -22,22 +22,6 @@ const prepareStringForCompare = (str: string, type: 'linear' | 'notion') =>
     .replace(/[*_\-/\\]/g, '')
     .replace(/\[image\]/g, '[]')
     .trim();
-
-export const initiateCache = (notionData: { [id: string]: MiddlePropertiesType }) => {
-  const cacheData: MiddlePropertiesType[] = [];
-
-  Object.keys(notionData).forEach((id) => {
-    const data = JSON.parse(JSON.stringify(notionData[id] || '{}'));
-    data.description = prepareStringForCompare(data.description ?? '', 'notion');
-    delete data.url;
-
-    cacheData.push(data);
-  });
-
-  setCache('syncData', cacheData);
-};
-
-console.log('IS DEEP STRICT EQUAL', _.isEqual({ b: 1, a: 1 }, { a: 1, b: 1 }));
 
 export const compareDataAndSaveToCache = async ({
   notionData,
@@ -67,8 +51,6 @@ export const compareDataAndSaveToCache = async ({
       linearItem.description = prepareStringForCompare(linearItem.description ?? '', 'linear');
     }
 
-    console.log(JSON.stringify(notionItem ?? {}).length, JSON.stringify(linearItem ?? {}).length, JSON.stringify(cacheItem ?? {}).length);
-
     // console.log({
     //   notionItem,
     //   linearItem,
@@ -86,11 +68,9 @@ export const compareDataAndSaveToCache = async ({
         cacheData[i] = notionItem;
       } else if (!_.isEqual(notionItem, cacheItem)) {
         // Notion is the source of truth
-        console.log('NOTION IS THE SOURCE OF TRUTH', notionItemO.description);
         result.push({ source: 'notion', data: notionItemO, conflict: false });
         cacheData[i] = notionItem;
       } else if (!_.isEqual(linearItem, cacheItem)) {
-        console.log({ linearItem, cacheItem }, _.isEqual(linearItem, cacheItem), _.isEqual(linearItem, cacheItem));
         // Linear is the source of truth
         result.push({ source: 'linear', data: linearItemO, conflict: false, updateTextIfNotion: notionItem.description !== linearItem.description });
         cacheData[i] = linearItem;

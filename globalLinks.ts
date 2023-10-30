@@ -1,3 +1,4 @@
+import config from './config';
 import { linear } from './linearAPI';
 import { getNotionUsers } from './notionAPI';
 
@@ -31,27 +32,45 @@ export const updateGlobalLinks = async () => {
   var statusPromise;
   if (Object.keys(statuses).length == 0 || now - new Date(lastUpdatedGlobals).getTime() > expiry) {
     statusPromise = linear
-      .workflowStates()
+      .workflowStates({
+        filter: {
+          team: {
+            id: {
+              eq: config.linear.team_id,
+            },
+          },
+        },
+      })
       .then((result) => result.nodes?.map((el) => ({ id: el.id, name: el.name })).reduce((acc, el) => ({ ...acc, [el.name]: el.id }), {}));
   }
 
   var labelPromise;
   if (Object.keys(labels).length == 0 || now - new Date(lastUpdatedGlobals).getTime() > expiry) {
     labelPromise = linear
-      .issueLabels()
+      .issueLabels({
+        // filter: {
+        //   team: {
+        //     id: {
+        //       eq: config.linear.team_id,
+        //     },
+        //   },
+        // },
+      })
       .then((result) => result.nodes?.map((el) => ({ id: el.id, name: el.name })).reduce((acc, el) => ({ ...acc, [el.name]: el.id }), {}));
   }
 
   var userPromise;
   if (users.length == 0 || now - new Date(lastUpdatedGlobals).getTime() > expiry) {
     userPromise = getNotionUsers().then((notionUsers) => {
-      const linearUsersPromise = linear.users();
+      const linearUsersPromise = linear.users({});
 
       return linearUsersPromise.then((linearUsers) =>
         notionUsers
           .filter((user) => user.type === 'person')
           .map((notionUser) => {
-            const linearUser = linearUsers.nodes.find((user) => user.email === (notionUser as any)?.person?.email);
+            const linearUser = linearUsers.nodes.find(
+              (user) => user.email === (notionUser as any)?.person?.email || user.name.toLowerCase() === (notionUser as any)?.name.toLowerCase()
+            );
             return {
               notionId: notionUser.id,
               linearId: linearUser?.id || '',

@@ -26,7 +26,7 @@ const convertNotionToMiddleman = (notionData: NotionObject[]): MiddlePropertiesT
       linearId: item.properties?.AutoLinearId?.rich_text?.[0]?.plain_text || '',
       title: item.properties.Name.title[0].text.content,
       description: item.body,
-      status: item.properties.Status?.select?.name || 'ToDo',
+      status: item.properties.Status?.select?.name || 'Todo',
       priority: item.properties?.Priority?.select?.name || 'No Priority',
       type: item.properties.Type.multi_select.map((type) => type.name),
       assign: users.find((el: any) => el.notionId === item.properties?.Assign?.people?.[0]?.id),

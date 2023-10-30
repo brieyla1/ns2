@@ -5,11 +5,9 @@ export const config = {
   },
   linear: {
     api_key: process.env.LINEAR_API_KEY,
-    project_id: process.env.LINEAR_PROJECT_ID,
+    team_id: process.env.LINEAR_TEAM_ID,
   },
   poll_interval: process.env.POLL_INTERVAL,
 };
-
-console.log('CONFIG', config);
 
 export default config;

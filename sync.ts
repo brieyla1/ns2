@@ -1,7 +1,8 @@
 import { createDatabaseItem, deleteDatabaseItem, getDatabaseItems, updateDatabaseItem } from './notionAPI';
 import { createLinearItem, deleteLinearItem, getLinearItems, updateLinearItem } from './linearAPI';
-import { compareDataAndSaveToCache, initiateCache } from './comparator';
+import { compareDataAndSaveToCache } from './comparator';
 import { convertMiddlemanToNotion } from './dataConverter';
+import { initiateCache } from './cache';
 
 let firstRun = true;
 
@@ -11,7 +12,7 @@ export const syncData = async () => {
     const notionData = await getDatabaseItems({ refetchAll: firstRun });
     const linearData = await getLinearItems({ refetchAll: firstRun });
 
-    if (firstRun) initiateCache(notionData!);
+    if (firstRun) initiateCache(notionData!, linearData!);
     firstRun = false;
 
     // Compare data

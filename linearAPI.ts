@@ -4,6 +4,7 @@ import config from './config';
 import { Issue, LinearClient } from '@linear/sdk';
 import { MiddlePropertiesType, convertLinearToMiddleman } from './dataConverter';
 import { labels, statuses } from './globalLinks';
+import { IssueCreateInput, IssueUpdateInput } from '@linear/sdk/dist/_generated_documents';
 
 export const linear = new LinearClient({ apiKey: config.linear.api_key });
 
@@ -12,13 +13,18 @@ const cache: { [id: string]: MiddlePropertiesType } = {};
 async function getLinearItems({ refetchAll }: { refetchAll?: boolean }) {
   try {
     const response = await linear.issues({
-      ...(!refetchAll && {
-        filter: {
+      filter: {
+        team: {
+          id: {
+            eq: config!.linear!.team_id!,
+          },
+        },
+        ...(!refetchAll && {
           updatedAt: {
             gte: new Date(new Date().getTime() - 10 * 60 * 1000),
           },
-        },
-      }),
+        }),
+      },
     });
 
     const results = response.nodes;
@@ -30,7 +36,6 @@ async function getLinearItems({ refetchAll }: { refetchAll?: boolean }) {
       if (cache[middleManItem.linearId] && middleManItem.id !== middleManItem.linearId) delete cache[middleManItem.linearId];
     }
 
-    // console.log('Grabbed latest linear items, total: ', Object.keys(cache).length);
     // console.log(cache);
 
     return cache;
@@ -47,12 +52,16 @@ export const Priority: any = {
   Low: 4,
 };
 
-function parseLinearMutateObject(properties: MiddlePropertiesType) {
+function parseLinearMutateObject(properties: MiddlePropertiesType): IssueUpdateInput {
+  console.log(properties.type?.map((el) => labels[el]));
+  console.log(labels[properties.type[0]]);
+  console.log(labels);
+
   return {
-    teamId: config.linear.project_id,
+    teamId: config.linear.team_id,
     title: properties.title,
     description: '[Notion Link](' + properties.url + ')\n' + (properties.description || ''),
-    stateId: statuses[properties.status || ''] || statuses['To Do'],
+    stateId: statuses[properties.status || ''] || statuses['Todo'],
     priority: Priority[properties.priority || ''] || 0,
     labelIds: properties.type?.map((el) => labels[el]),
     assigneeId: properties.assign?.linearId,
